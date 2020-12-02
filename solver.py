@@ -73,8 +73,12 @@ def main():
     # Create the linear solver with the GLOP backend.
     solver = pywraplp.Solver.CreateSolver('GLOP')
 
+    u = []
+
     # Create the variables.
     for i in range(len(edges)):
+        u_i = solver.NumVar(1, n-1, 'u' + str(i))
+        u.append(u_i)
         for j in range(len(edges[0])):
             if i != j:
                 edges[i][j].inpath = solver.BoolVar(edges[i][j].name)
@@ -88,20 +92,27 @@ def main():
         ct2 = solver.Constraint(1,1)
         for j in range(len(edges[0])):
             if i != j:
-                # Xa + ... + Xn = 1
+                
                 # From each galaxy, we can only have one exiting path
                 ct1.SetCoefficient(edges[i][j].inpath, 1)
 
-                # Ax + ... + Nx = 1
+               
                 # From each galaxy, we can only have one incoming path
                 ct2.SetCoefficient(edges[j][i].inpath, 1)
 
-                # 0 <= Xy + Yx <= 1
-                # Prevents going back 
-                if i > j:
-                    ct3 = solver.Constraint(0,1)
-                    ct3.SetCoefficient(edges[j][i].inpath, 1)
-                    ct3.SetCoefficient(edges[i][j].inpath, 1)
+                # # 0 <= Xy + Yx <= 1
+                # # Prevents going back 
+                # if i > j:
+                #     ct3 = solver.Constraint(0,1)
+                #     ct3.SetCoefficient(edges[j][i].inpath, 1)
+                #     ct3.SetCoefficient(edges[i][j].inpath, 1)
+
+                if(i >= 1 and i < n):
+                    ct3 = solver.Constraint(-solver.infinity(), n-1) # <=
+                    ct3.SetCoefficient(u[i], 1) # ui
+                    
+                    ct3.SetCoefficient(u[j], -1) # - uj
+                    ct3.SetCoefficient(edges[i][j].inpath, n) # + nCoisa
 
                 # Cost is the sum of the distance of all chosen paths
                 objective.SetCoefficient(edges[i][j].inpath, edges[i][j].distance)
