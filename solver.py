@@ -72,6 +72,7 @@ def main():
 
     # Create the linear solver with the SCIP backend.
     solver = pywraplp.Solver.CreateSolver('SCIP')
+    AT_LOWER_BOUND = solver.AT_LOWER_BOUND
 
     u = []
 
@@ -113,6 +114,7 @@ def main():
     
 
     objective.SetMinimization()
+    objective.BestBound()
 
     print('Number of constraints =', solver.NumConstraints())
 
@@ -204,7 +206,7 @@ def main():
     # solver.SetSeparating("SCIP_PARAMSETTING_AGRESSIVE")
     # solver.SCIPsetSeparating(SCIP, "SCIP_PARAMSETTING_AGRESSIVE", quiet)
 
-    # solver.set_time_limit(600000)
+    solver.set_time_limit(600000)
 
     solver.Solve()
     
@@ -251,7 +253,7 @@ def main():
 
     # Plots found path    
     plt.plot(x_values, y_values)
-    plt.scatter(x_values, y_values, marker='*', c='r', s=130)
+    plt.scatter(x_values, y_values, marker='.', c='r', s=130)
     for i in range(len(x_values)):
         plt.annotate(names[i], (x_values[i], y_values[i]))
     plt.show()
