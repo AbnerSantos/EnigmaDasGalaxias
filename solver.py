@@ -89,7 +89,7 @@ def plot(x_values, y_values, names, fig_size, title, optimal, objective):
     print('\n')
     print(title + ':')
     print('Objective value = ', objective)
-    print('GAP = ', (optimal - objective)/objective)
+    print('GAP = ', (objective - optimal)/optimal)
 
 def plot_by_galaxies(galaxies, edges, fig_size, title, optimal):
     # Variables used to plot and path recovering
